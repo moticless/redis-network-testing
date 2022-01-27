@@ -11,7 +11,7 @@ invoking the tests:
     
     $ ./build_redis.py
 
-To run the tests it is recommend to setup first pythov venv and then run:
+To run the tests it is recommended to set up first python venv and then run:
 
     $ pytest
 
