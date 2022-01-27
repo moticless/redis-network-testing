@@ -1,0 +1,53 @@
+networks:
+  frontend:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+services:
+  master:
+    volumes:
+     - ./config:/test/config
+     - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/master.conf"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.10
+  slave:
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/slave.conf"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.11
+  sentinel1:
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/sentinel1.conf --sentinel"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.100
+  sentinel2:
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/sentinel2.conf --sentinel"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.101
+  sentinel3:
+    ports:
+      - "8764:8764"
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/sentinel3.conf --sentinel"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.102

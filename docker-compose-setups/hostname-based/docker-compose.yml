@@ -1,0 +1,69 @@
+services:
+  master:
+    volumes:
+     - ./config:/test/config
+     - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: redis-server /test/config/master.conf
+    networks:
+      main:
+        aliases:
+          - redis-master
+  slave:
+    volumes:
+     - ./config:/test/config
+     - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: redis-server /test/config/slave.conf
+    networks:
+      main:
+        aliases:
+          - redis-slave
+  sentinel1:
+    volumes:
+     - ./config:/test/config
+     - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: redis-server /test/config/sentinel1.conf --sentinel
+    networks:
+      main:
+        aliases:
+          - redis-sentinel1
+  sentinel2:
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: redis-server /test/config/sentinel2.conf --sentinel
+    networks:
+      main:
+        aliases:
+          - redis-sentinel2
+  sentinel3:
+    ports:
+      - "8764:8764"
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "redis-server /test/config/sentinel3.conf --sentinel"
+    networks:
+      main:
+        aliases:
+          - redis-sentinel3
+  instance_standby:
+    volumes:
+      - ./config:/test/config
+      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
+    image: ${IMAGE}
+    command: bash -c "while true; do sleep 2; done"
+    networks:
+      main:
+        aliases:
+          - redis-standby
+
+networks:
+  main:
+    ipam:
+      config:
+        - subnet: 172.177.0.0/16
