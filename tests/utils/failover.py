@@ -140,8 +140,6 @@ def verify_num_sentinels_status_ok(expect_num_sentinels_ok):
     containers_status = get_containers_status()
 
     if containers_status.count("status=ok") != expect_num_sentinels_ok:
-        os.system('say "your program has failed"')
-        time.sleep(1000)
         print("Current Failure Time =", datetime.now().strftime("%H:%M:%S"))
         assert False, f'containers_status: {containers_status}'
     print( containers_status )

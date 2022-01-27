@@ -24,7 +24,7 @@ services:
      - ./config:/test/config
      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
     image: ${IMAGE}
-    command: redis-server /test/config/sentinel1.conf --sentinel
+    command: bash -c "redis-server /test/config/sentinel1.conf --sentinel"
     networks:
       main:
         aliases:
@@ -34,7 +34,7 @@ services:
       - ./config:/test/config
       - ${BIN_SRC_PATH}:${BIN_DST_PATH}
     image: ${IMAGE}
-    command: redis-server /test/config/sentinel2.conf --sentinel
+    command: bash -c "redis-server /test/config/sentinel2.conf --sentinel"
     networks:
       main:
         aliases:

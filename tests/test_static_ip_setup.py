@@ -17,10 +17,10 @@ class TestStaticIpSetup:
         shutil.rmtree(f'./tmp/{cls.DOCKER_COMPOSE_SETUP}')
 
     def test_master_unavail(self):
-        failover_and_recover (['--times', '1', '--wait', '30'])
+        failover_and_recover (['--times', '2', '--wait', '30'])
 
     def test_master_and_sentinel_unavail(self):
-        failover_and_recover (['--times', '1', '--wait', '30', '--sentinel_restart'])
+        failover_and_recover (['--times', '2', '--wait', '30', '--sentinel_restart'])
 
 
 
