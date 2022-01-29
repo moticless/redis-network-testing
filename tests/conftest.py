@@ -5,6 +5,9 @@ import os
 REDIS_IMAGE="ubuntu:20.04"
 BIN_SRC_PATH=f'{os.getcwd()}/artifacts'
 
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 @pytest.fixture(scope="session", autouse=True)
 def create_tmp_folder_fixture():
     os.mkdir('./tmp')

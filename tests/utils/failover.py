@@ -5,6 +5,7 @@ import argparse
 import docker
 import time
 import os
+import logging
 
 sentinel_stopped = 0
 
@@ -25,24 +26,27 @@ def failover():
     global sentinels
     global sentinel_stopped
     i_master = -1
+    logging.info (f'----> Let system reach steady state. Wait {args.wait}sec')
+    time.sleep(args.wait)
+    verify_num_sentinels_status_ok(len(sentinels))
     i_master = get_master_index()
-    print( "Steady state: " + get_containers_status() )
-    print (f'----> About to stop current master, Replica #{i_master} ({get_master_addr()})')
+    logging.info( "Steady state: " + get_containers_status() )
+    logging.info (f'----> About to stop current master, Replica #{i_master} ({get_master_addr()})')
     replicas[i_master].stop()
     if args.sentinel_restart:
         sentinels[sentinel_stopped].stop()
-        print (f'----> Replica #{i_master} and Sentinel #{sentinel_stopped} unavailable now')
+        logging.info (f'----> Replica #{i_master} and Sentinel #{sentinel_stopped} unavailable now')
     else:
-        print (f'----> Replica #{i_master} unavailable now')
-    print(f'----> Wait {args.wait}sec to failover to complete')
+        logging.info (f'----> Replica #{i_master} unavailable now')
+    logging.info(f'----> Wait {args.wait}sec to failover to complete')
     time.sleep(args.wait)
     verify_num_sentinels_status_ok(len(sentinels)-1 if args.sentinel_restart else len(sentinels))
     replicas[i_master].start()
     if args.sentinel_restart:
         sentinels[sentinel_stopped].start()
-        print (f'----> Replica and Sentinel are available. Now wait {args.wait}sec')
+        logging.info (f'----> Replica and Sentinel are available. Now wait {args.wait}sec')
     else:
-        print (f'----> Replica is available. Now wait {args.wait}sec')
+        logging.info (f'----> Replica is available. Now wait {args.wait}sec')
     time.sleep(args.wait)
     verify_num_sentinels_status_ok(len(sentinels))
     sentinel_stopped = (1 + sentinel_stopped) % len(sentinels)
@@ -136,20 +140,20 @@ def get_master_index():
     raise
 
 def verify_num_sentinels_status_ok(expect_num_sentinels_ok):
-    print (f'----> Done wait {args.wait}sec. Verify {expect_num_sentinels_ok} sentinels status ok')
+    logging.info (f'----> Done wait {args.wait}sec. Verify {expect_num_sentinels_ok} sentinels status ok')
     containers_status = get_containers_status()
 
     if containers_status.count("status=ok") != expect_num_sentinels_ok:
-        print("Current Failure Time =", datetime.now().strftime("%H:%M:%S"))
+        logging.error("Time of failure: ", datetime.now().strftime("%H:%M:%S"))
         assert False, f'containers_status: {containers_status}'
-    print( containers_status )
+    logging.info( containers_status )
 
 def main(cmd_args):
     init(cmd_args)
     for i in range(1,args.times+1):
-        print (f'------------------------------ START TEST {args.header} iter:{i} ---------------------------')
+        logging.info(f'------------------------------ START TEST {args.header} iter:{i} ---------------------------')
         failover()
-        print (f'------------------------------ END TEST {args.header} iter:{i} ----------------------------\n\n')
+        logging.info(f'------------------------------ END TEST {args.header} iter:{i} ----------------------------\n\n')
 
 #main()
 

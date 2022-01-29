@@ -4,17 +4,19 @@ import shutil
 import time
 
 class TestStaticIpSetup:
-    DOCKER_COMPOSE_SETUP="docker-compose-setups/static-ip/"
+    SRC_DIR='docker-compose-setups/static-ip/'
+    DST_DIR = f'./tmp/{SRC_DIR}'
 
     def setup_class(cls):
-        shutil.copytree(cls.DOCKER_COMPOSE_SETUP, f'./tmp/{cls.DOCKER_COMPOSE_SETUP}')
-        subprocess.check_call(["docker-compose", "up", "-d"], cwd=f'./tmp/{cls.DOCKER_COMPOSE_SETUP}')
+        shutil.copytree(cls.SRC_DIR, cls.DST_DIR)
+        subprocess.check_call(["docker-compose", "up", "-d"], cwd=cls.DST_DIR)
         time.sleep(10)
 
     def teardown_class(cls):
-        subprocess.check_call(["docker-compose", "down"], cwd=f'./tmp/{cls.DOCKER_COMPOSE_SETUP}')
+        print("teardown")
+        subprocess.check_call(["docker-compose", "down"], cwd=cls.DST_DIR)
         time.sleep(3)
-        shutil.rmtree(f'./tmp/{cls.DOCKER_COMPOSE_SETUP}')
+        shutil.rmtree(cls.DST_DIR)
 
     def test_master_unavail(self):
         failover_and_recover (['--times', '2', '--wait', '30'])
