@@ -4,20 +4,20 @@ networks:
       config:
         - subnet: 172.20.0.0/24
 services:
-  master:
+  replica1:
     volumes:
      - ./config:/test/config
      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
     image: ${IMAGE}
-    command: redis-server /test/config/master.conf
+    command: redis-server /test/config/replica1.conf
     ports:
       - "30692:6379"
-  slave:
+  replica2:
     volumes:
      - ./config:/test/config
      - ${BIN_SRC_PATH}:${BIN_DST_PATH}
     image: ${IMAGE}
-    command: redis-server /test/config/slave.conf
+    command: redis-server /test/config/replica2.conf
     ports:
       - "30693:6379"
   sentinel1:
