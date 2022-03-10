@@ -1,0 +1,49 @@
+networks:
+  frontend:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+services:
+  replica1:
+    volumes:
+     - ./certs:/test/certs
+     - ./config:/test/config
+    image: redis:6.2.6
+    command: bash -c "redis-server /test/config/replica1.conf"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.5
+  replica2:
+    volumes:
+     - ./certs:/test/certs
+     - ./config:/test/config
+    image: redis:6.2.6
+    command: bash -c "redis-server /test/config/replica2.conf"
+    networks:
+      frontend:
+        ipv4_address: 172.20.0.11
+  sentinel1:
+    volumes:
+     - ./certs:/test/certs
+     - ./config:/test/config
+    image: redis:6.2.6
+    command: bash -c "redis-server /test/config/sentinel1.conf --sentinel"
+    networks:
+      - frontend
+  sentinel2:
+    volumes:
+      - ./certs:/test/certs
+      - ./config:/test/config
+    image: redis:6.2.6
+    command: bash -c "redis-server /test/config/sentinel2.conf --sentinel"
+    networks:
+      - frontend
+  sentinel3:
+    volumes:
+      - ./certs:/test/certs
+      - ./config:/test/config
+    image: redis:6.2.6
+    command: bash -c "redis-server /test/config/sentinel3.conf --sentinel"
+    networks:
+      - frontend
+
