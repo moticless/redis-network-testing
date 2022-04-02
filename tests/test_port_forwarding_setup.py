@@ -8,7 +8,7 @@ import os
 class TestPortForwardingSetup:
     SRC_DIR = 'docker-compose-setups/port-forwarding/'
     DST_DIR = f'./tmp/{SRC_DIR}'
-    SETUP_NAME = "port-forward"
+    SETUP_NAME = "port-forwarding"
 
     def setup_class(cls):
         shutil.copytree(cls.SRC_DIR, cls.DST_DIR)
