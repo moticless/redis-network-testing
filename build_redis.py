@@ -7,11 +7,13 @@ REDIS_IMAGE='ubuntu:20.04'
 
 shutil.rmtree('./artifacts',ignore_errors=True)
 print ("Building redis artifacts ...")
-out = docker.from_env().containers.run(
+container = docker.from_env().containers.run(
+    detach=True,
     image=REDIS_IMAGE,
     command=" bash -c \"apt-get update; apt-get install -y build-essential libssl-dev; cd /redis && make\"",
     volumes={os.getcwd() + "/redis": {'bind': '/redis/', 'mode': 'rw'}})
-print(out)
+for line in container.logs(stream=True):
+    print(line.strip())
 
 os.mkdir('./artifacts')
 shutil.copyfile('./redis/src/redis-server', './artifacts/redis-server')
