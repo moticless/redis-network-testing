@@ -12,7 +12,7 @@ class TestPortForwardingSetup:
 
     def setup_class(cls):
         shutil.copytree(cls.SRC_DIR, cls.DST_DIR)
-        subprocess.check_call(["docker-compose", "-p", cls.SETUP_NAME, "up", "-d"], cwd=cls.DST_DIR)
+        subprocess.check_call(["docker-compose", "-p", cls.SETUP_NAME, "up", "-d", "--force-recreate"], cwd=cls.DST_DIR)
         time.sleep(10)
 
     def teardown_class(cls):
