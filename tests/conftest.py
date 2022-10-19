@@ -10,6 +10,10 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 @pytest.fixture(scope="session", autouse=True)
 def create_tmp_folder_fixture():
+    try:
+        shutil.rmtree('./tmp')
+    except Exception:
+        pass
     os.mkdir('./tmp')
 
     # Let docker-compose consume default image and artifacts

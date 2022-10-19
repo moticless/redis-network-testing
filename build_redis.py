@@ -10,7 +10,7 @@ print ("Building redis artifacts ...")
 container = docker.from_env().containers.run(
     detach=True,
     image=REDIS_IMAGE,
-    command=" bash -c \"apt-get update; apt-get install -y build-essential libssl-dev; cd /redis && make\"",
+    command=" bash -c \"apt-get update; apt-get install -y build-essential libssl-dev; cd /redis && make clean && make\"",
     volumes={os.getcwd() + "/redis": {'bind': '/redis/', 'mode': 'rw'}})
 for line in container.logs(stream=True):
     print(line.strip())
